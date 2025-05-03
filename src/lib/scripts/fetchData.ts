@@ -1,73 +1,70 @@
-import { supabase } from '../clients/supabaseClient';
+// src/lib/scripts/fetchData.ts
+import { getDB } from '../clients/mysqlClient';
 import fs from 'fs';
 import path from 'path';
 import type { FeatureCollection, GeoJsonProperties, Point } from 'geojson';
 import { roundCoordinates } from '$lib/utils/utils';
 
-type Moment = {
-  short_id: number;
-  location: {
-    coordinates: [number, number];
-  };
-  description: string;
-};
+type CoordRow = { short_id: number; lat: number; lng: number };
+type DescRow = { short_id: number; description: string };
 
 export async function fetchIdCoords(): Promise<FeatureCollection<
   Point,
   GeoJsonProperties
 > | null> {
-  const { data, error } = await supabase
-    .from('moments')
-    .select('short_id, location')
-    .eq('status', 'approved');
+  const db = await getDB();
+  try {
+    const [rows] = await db.query(
+      'SELECT short_id, lat, lng FROM moments WHERE status = "approved"'
+    );
 
-  // testing - KILLME
-  console.log('RAW rows →', data);
+    const geoJson: FeatureCollection<Point, GeoJsonProperties> = {
+      type: 'FeatureCollection',
+      features: (rows as CoordRow[]).map((row) => ({
+        type: 'Feature',
+        id: row.short_id,
+        geometry: {
+          type: 'Point',
+          coordinates: roundCoordinates([row.lng, row.lat], 6)
+        },
+        properties: {}
+      }))
+    };
 
-  if (error) {
-    console.error('Error fetching id and coordinate pairs:', error);
+    return geoJson;
+  } catch (err) {
+    console.error('Error fetching coordinates:', err);
     return null;
+  } finally {
+    await db.end();
   }
-
-  const geoJson: FeatureCollection<Point, GeoJsonProperties> = {
-    type: 'FeatureCollection',
-    features: (data as Moment[]).map((moment) => ({
-      type: 'Feature',
-      id: moment.short_id,
-      geometry: {
-        type: 'Point',
-        coordinates: roundCoordinates(moment.location.coordinates, 6)
-      },
-      properties: {} // Include properties to match GeoJSON structure
-    }))
-  };
-
-  return geoJson;
 }
 
 export async function fetchIdDescriptions(): Promise<Record<
   number,
   string
 > | null> {
-  const { data, error } = await supabase
-    .from('moments')
-    .select('short_id, description')
-    .eq('status', 'approved');
+  const db = await getDB();
+  try {
+    const [rows] = await db.query(
+      'SELECT short_id, description FROM moments WHERE status = "approved"'
+    );
 
-  if (error) {
-    console.error('Error fetching id and description pairs:', error);
+    const descriptions = (rows as DescRow[]).reduce(
+      (acc, row) => {
+        acc[row.short_id] = row.description;
+        return acc;
+      },
+      {} as Record<number, string>
+    );
+
+    return descriptions;
+  } catch (err) {
+    console.error('Error fetching descriptions:', err);
     return null;
+  } finally {
+    await db.end();
   }
-
-  const descriptions: Record<number, string> = (data as Moment[]).reduce(
-    (acc, moment) => {
-      acc[moment.short_id] = moment.description;
-      return acc;
-    },
-    {} as Record<number, string>
-  );
-
-  return descriptions;
 }
 
 export async function writeGeoJsonToFile(
@@ -80,10 +77,11 @@ export async function writeGeoJsonToFile(
 
   const simplifiedGeoJson = {
     ...geoJson,
-    features: geoJson.features.map(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ({ properties: properties, ...rest }) => rest
-    )
+    features: geoJson.features.map((f) => ({
+      type: f.type,
+      id: f.id,
+      geometry: f.geometry
+    }))
   };
 
   const filePath = path.resolve(outputDir, 'moments.json');

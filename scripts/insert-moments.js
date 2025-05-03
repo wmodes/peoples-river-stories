@@ -1,42 +1,44 @@
-/**
- *  import‑moments.js
- *  Usage: node scripts/import‑moments.js path/to/file.csv
- *  CSV columns required: lat,lng,description,slug   (header names are case‑insensitive)
- */
+#!/usr/bin/env node
+// scripts/import-moments.js
+// Usage: node scripts/import-moments-mysql.js path/to/file.csv
+// Requires CSV columns: lat,lng,description,slug
 
 import fs from 'node:fs';
 import { parse } from 'csv-parse/sync';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { config as loadEnv } from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
+import mysql from 'mysql2/promise';
 
 // ─── env ────────────────────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
 loadEnv({ path: resolve(__dirname, '..', '.env') });
 
-const { SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY } = process.env;
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  console.error(
-    '❌  SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing in .env'
-  );
+const { MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD } =
+  process.env;
+
+if (!MYSQL_HOST || !MYSQL_DATABASE || !MYSQL_USER || !MYSQL_PASSWORD) {
+  console.error('❌  Missing one or more MySQL connection env vars');
   process.exit(1);
 }
-const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false }
+
+// ─── connect to MySQL ───────────────────────────────────────────────────────
+const db = await mysql.createConnection({
+  host: MYSQL_HOST,
+  port: MYSQL_PORT || 3306,
+  user: MYSQL_USER,
+  password: MYSQL_PASSWORD,
+  database: MYSQL_DATABASE
 });
 
-// ─── helpers ────────────────────────────────────────────────────────────────
-const pointEWKT = (lng, lat) => `SRID=4326;POINT(${lng} ${lat})`;
-
+// ─── constants ──────────────────────────────────────────────────────────────
 const DEFAULT_STATUS = 'approved';
-const DEFAULT_LANGUAGE = null; // or e.g. 'en'
 const DESCR_TEMPLATE =
   '<a href="https://peoplesriverhistory.org/post/%%slug%%" target="sharp">%%description%%</a> <small>-Secret&nbspHistory</small>';
 
 // ─── ingest CSV ─────────────────────────────────────────────────────────────
 if (process.argv.length < 3) {
-  console.error('usage: node scripts/import‑moments.js file.csv');
+  console.error('usage: node scripts/import-moments-mysql.js file.csv');
   process.exit(1);
 }
 
@@ -61,27 +63,24 @@ for (const r of srcRows) {
     rawDescription
   );
 
-  inserts.push({
-    location: pointEWKT(lng, lat),
-    description,
-    status: DEFAULT_STATUS,
-    language: DEFAULT_LANGUAGE
-  });
+  inserts.push([lat, lng, description, DEFAULT_STATUS]);
 }
 
+// ─── insert into MySQL ──────────────────────────────────────────────────────
 if (!inserts.length) {
   console.log('No valid rows to insert.');
   process.exit(0);
 }
 
-// ─── insert to Supabase ─────────────────────────────────────────────────────
-const { error, count } = await sb
-  .from('moments')
-  .insert(inserts, { count: 'exact' });
-
-if (error) {
-  console.error('❌  Insert failed:', error.message);
+try {
+  const [result] = await db.query(
+    'INSERT INTO moments (lat, lng, description, status) VALUES ?',
+    [inserts]
+  );
+  console.log(`✅  Inserted ${result.affectedRows} rows.`);
+} catch (err) {
+  console.error('❌  Insert failed:', err.message);
   process.exit(1);
+} finally {
+  await db.end();
 }
-
-console.log(`✅  Inserted ${count} rows.`);
