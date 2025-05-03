@@ -16,9 +16,9 @@ mysql -u root 1740013389_peoplesriverhistory_org \
         AND p.post_type = 'post';" \
   --batch --raw --skip-column-names \
   > test-data/markers.csv
-  ```
+```
 
-##  2. Convert serialized marker data to flat CSV
+## 2. Convert serialized marker data to flat CSV
 
 ```
 node scripts/db2moments.js test-data/markers.csv
