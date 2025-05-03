@@ -4,7 +4,7 @@
   fill="none"
   viewBox="4 0 45 45"
   ><g filter="url(#filter0_d_0_1)"
-    ><rect x="4" width="45" height="45" fill="#FEC3E0"></rect><rect
+    ><rect x="4" width="45" height="45" fill="#FEEDC3"></rect><rect
       x="4.5"
       y="0.5"
       width="44"

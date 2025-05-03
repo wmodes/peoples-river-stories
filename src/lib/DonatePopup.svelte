@@ -13,12 +13,20 @@
     <div class="toast">
       <div class="toast-message">
         <a
-          href="https://www.patreon.com/queeringthemap"
+          href="https://peoplesriverhistory.org/"
           rel="noopener"
           target="_blank"
         >
-          <span>DONATE</span> to Queering the Map to help us stay online.
-        </a>
+          <span>EXPLORE</span> more river stories,</a
+        >
+
+        <a
+          href="https://peoplesriverhistory.org/support/"
+          rel="noopener"
+          target="_blank"
+        >
+          or <span>SUPPORT</span> the project.</a
+        >
       </div>
       <button class="toast-close" on:click={closeToast} aria-label="Close"
       ></button>
@@ -48,7 +56,7 @@
     box-shadow:
       0 4px 6px -1px rgba(0, 0, 0, 0.1),
       0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--color-pink);
+    border: 1px solid var(--color-base);
     border-radius: 0.125rem;
     display: flex;
     align-items: center;
@@ -63,7 +71,7 @@
     flex: 1;
   }
   .toast-message a {
-    color: var(--color-pink);
+    color: var(--color-base);
     text-decoration: unset;
   }
   .toast-message a span {
@@ -75,7 +83,7 @@
     right: 4px;
     background: none;
     border: none;
-    color: var(--color-pink);
+    color: var(--color-base);
     cursor: pointer;
     font: 1rem sans-serif;
   }

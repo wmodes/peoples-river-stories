@@ -3,8 +3,9 @@
 :root {
   /* colors */
   --color-dark: #231f20;
-  --color-pink: #f4b9d6;
-  --color-pink-bright: #ff00ff;
+  /* original pink: #feedc3 and #FEEDC3*/
+  --color-base: #feedc3;
+  --color-highlight: #d8613c;
 
   /* breakpoints */
   --screen-wide: 800px;

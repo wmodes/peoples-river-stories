@@ -1,6 +1,6 @@
-# Queering the Map
+# Peoples River Stories
 
-Queering the Map is a community-based platform where individuals anonymously pin their queer experiences and stories to specific locations on a global map.
+Community-driven interactive map of American river stories—forked from Queering the Map for “A Secret History of American River People.”
 
 ## Setup
 
@@ -16,7 +16,7 @@ This approach is quicker and allows you to work on the frontend without setting 
 
 ### Option 2: Full Setup with Supabase
 
-This approach is necessary if you want to work also work on the backend. It takes longer to set up but provides a complete development environment, aligned with what we use in production.
+This approach is necessary if you want to also work on the backend. It takes longer to set up but provides a complete development environment, aligned with what we use in production.
 
 1. Install dependencies with `npm install`.
 1. Set up a Supabase (local) project with the [official CLI](https://supabase.com/docs/guides/cli/getting-started).
@@ -63,3 +63,13 @@ CLOUDFLARE_TURNSTILE_SECRET
 ```
 
 For more info, see this guide: https://developers.cloudflare.com/turnstile/get-started/.
+
+## Attribution
+
+- Forked from the [Queering the Map](https://github.com/queeringthemap/queering-the-map) codebase (MIT License)
+
+- Code of Conduct adapted from the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)
+
+- Concept and participatory framework inspired by **A Secret History of American River People**
+
+- Map tiles by [OpenStreetMap contributors]() (ODbL)

@@ -17,5 +17,5 @@
 }
 .general_button__fadein:hover circle,
 .general_button__fadein:hover line {
-  stroke: var(--color-pink) !important;
+  stroke: var(--color-base) !important;
 }

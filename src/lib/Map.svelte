@@ -28,7 +28,12 @@
   let mapContainer: HTMLDivElement;
   let isMomentLayerClicked = false;
 
-  const initialState = { lng: -73.567256, lat: 45.501689, zoom: 12.5 };
+  // Orig QTM Motreal center
+  // const initialState = { lng: -73.567256, lat: 45.501689, zoom: 12.5 };
+  // Geographic Center of US: 39.828322, -98.579380
+  // a point near Cairo, Illinois: 37.191772, -89.038313
+  // close in point on Cairo: 37.0364483,-89.2210141,12.91
+  const initialState = { lat: 37.0364483, lng: -89.2210141, zoom: 12 };
 
   const markerHeight = 39;
   const markerId = 'moments';
@@ -87,7 +92,7 @@
     });
   }
 
-  onMount(() => {
+  onMount(async () => {
     map = new Map({
       container: mapContainer,
       style: style,
@@ -116,6 +121,21 @@
     );
 
     map.keyboard.enable();
+
+    const observer = new MutationObserver(() => {
+      // console.log('Mutation detected');
+      const details = document.querySelector(
+        '.maplibregl-ctrl-attrib'
+      ) as HTMLDetailsElement;
+      // console.log('Details element:', details);
+      if (details) {
+        details.removeAttribute('open');
+        details.classList.remove('maplibregl-compact-show');
+        // observer.disconnect(); // Stop observing once done
+      }
+    });
+
+    observer.observe(map.getContainer(), { childList: true, subtree: true });
 
     map.on('load', async () => {
       map.addSource(markerId, {

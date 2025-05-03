@@ -15,7 +15,7 @@
   .button {
     display: inline-block;
     border: 1.01px solid var(--color-dark);
-    background: var(--color-pink);
+    background: var(--color-base);
     color: var(--color-dark);
     cursor: pointer;
     padding: 10px 0px;
@@ -34,7 +34,7 @@
 
   .button-enabled:hover {
     background-color: black;
-    color: var(--color-pink);
+    color: var(--color-base);
   }
 
   .button:disabled {

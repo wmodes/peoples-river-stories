@@ -21,6 +21,9 @@ export async function fetchIdCoords(): Promise<FeatureCollection<
     .select('short_id, location')
     .eq('status', 'approved');
 
+  // testing - KILLME
+  console.log('RAW rows →', data);
+
   if (error) {
     console.error('Error fetching id and coordinate pairs:', error);
     return null;

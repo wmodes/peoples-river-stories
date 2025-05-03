@@ -13,14 +13,14 @@
     <svg
       class="general_button__fadein"
       xmlns="http://www.w3.org/2000/svg"
-      fill="#f4b9d6"
+      fill="#feedc3"
       viewBox="0 0 45 45"
       ><rect
         x="0.5"
         y="0.5"
         width="44"
         height="44"
-        fill="#f4b9d6"
+        fill="#feedc3"
         stroke="black"
       ></rect><line
         x1="15.3536"
