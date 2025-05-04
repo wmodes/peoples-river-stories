@@ -8,7 +8,7 @@ Community-driven interactive map of American river stories---forked from Queerin
 
 This branch uses a MySQL backend instead of Supabase.
 
-- The Supabase configuration is preserved in the `switch2suprabase` branch, with an appropriate README for that setup.
+- The Supabase configuration is preserved in the `switch2supabase` branch, with an appropriate README for that setup.
 
 - The MySQL schema is located in `setup/create-mysql-db.sql`.
 
