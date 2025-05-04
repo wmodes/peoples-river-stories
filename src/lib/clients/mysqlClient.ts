@@ -1,5 +1,3 @@
-// src/lib/clients/mysqlClient.ts
-import mysql from 'mysql2/promise';
 import { config as loadEnv } from 'dotenv';
 
 loadEnv(); // Load from .env when not using Vite
@@ -16,8 +14,8 @@ if (!MYSQL_HOST || !MYSQL_DATABASE || !MYSQL_USER || !MYSQL_PASSWORD) {
   throw new Error('Missing MySQL connection environment variables');
 }
 
-// Export a function to get a fresh connection
 export async function getDB() {
+  const mysql = await import('mysql2/promise');
   return mysql.createConnection({
     host: MYSQL_HOST,
     port: Number(MYSQL_PORT),
