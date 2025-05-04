@@ -1,5 +1,5 @@
 <script>
-  import logo from '$lib/assets/QTM_LOGO2024.png';
+  import logo from '$lib/assets/PRS_LOGO2024.png';
   import InfoButton from './InfoButton.svelte';
   import AddButton from './AddButton.svelte';
   import { infoOverlayVisible, addOverlayVisible } from '../stores';

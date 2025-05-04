@@ -15,7 +15,7 @@
 # (though ordinary Caddy messages should be reported in /var/log/caddy/access.log)
 
 
-https://stories.peoplesriverhistory.org {
+https://map.peoplesriverhistory.org {
     tls wmodes@gmail.com
     reverse_proxy localhost:3000
 
