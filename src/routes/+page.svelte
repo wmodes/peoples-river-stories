@@ -15,7 +15,7 @@
   <title>People's River Stories</title>
   <meta
     name="description"
-    content="People's River Stories is a community-driven map where visitors share river memories, oral histories, and reflections along America's waterways."
+    content="A community-driven map where visitors share river memories, oral histories, and reflections along the world's waterways."
   />
 
   <meta property="og:type" content="website" />
@@ -24,7 +24,7 @@
   <meta property="og:image" content={prs_sharing_image} />
   <meta
     property="og:description"
-    content="People's River Stories is a community-driven map where visitors share river memories, oral histories, and reflections along America's waterways."
+    content="A community-driven map where visitors share river memories, oral histories, and reflections along the world's waterways."
   />
   <meta property="og:site_name" content="People's River Stories" />
   <meta property="og:locale" content="en_US" />
@@ -33,7 +33,7 @@
   <meta name="twitter:title" content="People's River Stories" />
   <meta
     name="twitter:description"
-    content="People's River Stories is a community-driven map where visitors share river memories, oral histories, and reflections along America's waterways."
+    content="A community-driven map where visitors share river memories, oral histories, and reflections along the world's waterways."
   />
   <meta name="twitter:image" content={prs_sharing_image} />
 </svelte:head>
