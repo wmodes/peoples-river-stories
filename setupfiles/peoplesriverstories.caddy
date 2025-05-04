@@ -16,15 +16,8 @@
 
 
 https://stories.peoplesriverhistory.org {
-    root * /home/debian/peoples-river-stories/build
-    encode gzip
     tls wmodes@gmail.com
-
-    @api path /moment/* /moments
-    reverse_proxy @api localhost:3000
-
-    file_server
-    try_files {path} /index.html
+    reverse_proxy localhost:3000
 
     log {
         output file /var/log/caddy/access.log {
