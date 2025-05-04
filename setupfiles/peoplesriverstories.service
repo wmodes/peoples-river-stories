@@ -1,0 +1,34 @@
+# PeoplesRiverStories systemctl service file
+#
+# Link into systemctl with:
+# % sudo ln -sf /home/debian/peoples-river-stories/setupfiles/peoplesriverstories.service /etc/systemd/system/peoplesriverstories.service
+# % sudo systemctl daemon-reexec
+#
+# Start:
+# % sudo systemctl start peoplesriverstories.service
+#
+# Restart:
+# % sudo systemctl restart peoplesriverstories.service
+#
+# View journal:
+# % journalctl -u peoplesriverstories.service --no-pager | less
+# (though ordinary server messages should be visible in the system journal)
+
+[Unit]
+Description=Peoples River Stories Node Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/debian/peoples-river-stories
+ExecStart=/usr/bin/node build/index.js
+Environment=NODE_ENV=production
+EnvironmentFile=/home/debian/peoples-river-stories/.env
+Restart=on-failure
+StandardOutput=journal
+StandardError=journal
+User=debian
+Group=debian
+
+[Install]
+WantedBy=multi-user.target

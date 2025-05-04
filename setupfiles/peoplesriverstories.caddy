@@ -1,0 +1,45 @@
+# Caddyfile for Peoples River Stories
+#
+# Symlink with:
+# % sudo ln -sf /home/debian/peoples-river-stories/setupfiles/peoplesriverstories.caddy /etc/caddy/sites/peoplesriverstories.caddy
+# % echo 'import sites/*' | sudo tee /etc/caddy/Caddyfile  # if not already present
+#
+# Start:
+# % sudo systemctl start caddy
+#
+# Restart:
+# % sudo systemctl restart caddy
+#
+# View journal:
+# % journalctl -u caddy --no-pager | less
+# (though ordinary Caddy messages should be reported in /var/log/caddy/access.log)
+
+
+https://stories.peoplesriverhistory.org {
+    root * /home/debian/peoples-river-stories/build
+    encode gzip
+    tls wmodes@gmail.com
+
+    @api path /moment/* /moments
+    reverse_proxy @api localhost:3000
+
+    file_server
+    try_files {path} /index.html
+
+    log {
+        output file /var/log/caddy/access.log {
+            roll_size 100mb
+            roll_keep 7
+            roll_keep_for 720h
+        }
+    }
+
+    handle_errors {
+        @notfound {
+            not file {path}
+        }
+        root * /home/debian/peoples-river-stories/fallback
+        rewrite @notfound /index.html
+        file_server
+    }
+}
