@@ -1,75 +1,72 @@
-# Peoples River Stories
+Peoples River Stories
+=====================
 
-Community-driven interactive map of American river stories—forked from Queering the Map for “A Secret History of American River People.”
+Community-driven interactive map of American river stories---forked from Queering the Map for "A Secret History of American River People."
 
-## Setup
+Setup
+-----
 
-You have two options for setting up the project: a quick setup for frontend-only work or a full setup with Supabase.
+### Database (MySQL)
 
-### Option 1: Quick Setup for Frontend-Only Work
+This branch uses a MySQL backend instead of Supabase.
 
-This approach is quicker and allows you to work on the frontend without setting up Supabase. Note that popups will not show text if you choose this option.
+-   The Supabase configuration is preserved in the `switch2suprabase` branch, with an appropriate README for that setup.
 
-1. Install dependencies with `npm ci`.
-2. Run the seed script to generate mock data: `npm run seed-data`.
-3. Copy `.env.example` into `.env`: `cp .env.example .env`.
+-   The MySQL schema is located in `setup/create-mysql-db.sql`.
 
-### Option 2: Full Setup with Supabase
+### Markers
 
-This approach is necessary if you want to also work on the backend. It takes longer to set up but provides a complete development environment, aligned with what we use in production.
+-   The database is only used to hold submissions until they are approved.
 
-1. Install dependencies with `npm install`.
-1. Set up a Supabase (local) project with the [official CLI](https://supabase.com/docs/guides/cli/getting-started).
-1. Set the environment variables.
-   1. Copy the `.env.example` file to `.env` (manually or with `cp .env.example .env`).
-   1. Get your `SUPABASE_URL` and `SUPABASE_ANON_KEY` from the output of `supabase start`.
-1. Run the DB migrations locally with `supabase db reset`.
-1. Fetch the data from Supabase: `npm run fetch-data`.
+-   For now, approval must be done manually within the database by updating the `status` field from `'pending'` to `'approved'`.
 
-## Developing
+-   To pre-populate the database with existing markers, experiment with:
 
-To start a development server:
+```
+node scripts/insert-moments.js test-data/markers-stories.csv
+```
 
-```bash
+-   To fetch the data from the database and create the `moments.json` and `descriptions.json` static files:
+
+```
+npm run fetch-data
+```
+
+Developing
+----------
+
+To start the development server:
+
+```
 npm run dev
 ```
 
-## Testing
+To start the production server (you will need a proper deployment stack for Node/SvelteKit):
 
-For testing the database make sure that the `pgTap` extension is enabled in postgres ([more info](https://supabase.com/docs/guides/database/extensions/pgtap)). Afterwards, you can run: `supabase test db`.
-
-## Deploying and Building for production
-
-To use Supabase as a remote backend make sure to link your local development with your remote Supabase project:
-
-1. Make sure you have a Supabase acount and connect it to the supabase cli: `supabase login`
-1. Link a specific remote project `supabase link --project-ref <project-ref>` ([more info](https://supabase.com/docs/reference/cli/supabase-link))
-1. Run migrations on remote DB `supabase db push` ([more info](https://supabase.com/docs/reference/cli/supabase-db-push))
-1. Make sure that the env vars `SUPABASE_URL` and `SUPABASE_ANON_KEY` do point to the correct production project and not the local containers. You can grab them from inside [your Supabase project's dashboard](https://supabase.com/dashboard/project/_/settings/api).
-
-To create a production version of the app:
-
-```bash
+```
 npm run build
+npm run preview
 ```
 
-### Set up Captcha Protection
+Captcha Protection
+------------------
 
-For Captcha protection of the point submissions, we use Cloudflare Turnstile. Once you create a widget there, populate the correct values for the env variables:
+We use Cloudflare Turnstile to protect point submissions. Set the following environment variables:
 
-```bash
+```
 PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY
 CLOUDFLARE_TURNSTILE_SECRET
 ```
 
-For more info, see this guide: https://developers.cloudflare.com/turnstile/get-started/.
+More info: https://developers.cloudflare.com/turnstile/get-started/
 
-## Attribution
+Attribution
+-----------
 
-- Forked from the [Queering the Map](https://github.com/queeringthemap/queering-the-map) codebase (MIT License)
+-   Forked from the [Queering the Map](https://github.com/queeringthemap/queering-the-map) codebase (MIT License)
 
-- Code of Conduct adapted from the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)
+-   Code of Conduct adapted from the [Contributor Covenant v2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct.html)
 
-- Concept and participatory framework inspired by **A Secret History of American River People**
+-   Concept and participatory framework inspired by **A Secret History of American River People**
 
-- Map tiles by [OpenStreetMap contributors]() (ODbL)
+-   Map tiles by OpenStreetMap contributors (ODbL)
