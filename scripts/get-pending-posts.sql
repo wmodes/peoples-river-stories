@@ -1,0 +1,1 @@
+SELECT * FROM moments WHERE status = 'pending';

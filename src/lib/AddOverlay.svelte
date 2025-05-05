@@ -112,7 +112,7 @@
             <span>1</span>Click the location of your story on the map.
           </div>
           <div class="partial_div-numbered">
-            <span>2</span>Share your story in the the text box below.
+            <span>2</span>Share your story in the the text box below. Bonus points if you mention the name of the river.
           </div>
           <div class="partial_div-numbered">
             <span>3</span>Click the Add button.
