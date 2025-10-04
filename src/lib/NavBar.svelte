@@ -43,7 +43,7 @@
     tooltipTimer = setTimeout(() => {
       revealTooltip();
       tooltipTimer = null;
-    }, 60000);
+    }, 30000);
   });
 
   onDestroy(() => {

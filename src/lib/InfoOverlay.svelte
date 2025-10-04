@@ -18,9 +18,7 @@
 </script>
 
 <aside class="overlay overlay--info" bind:this={root}>
-  <CloseButton functionOnClick={closeInfoOverlay}
-    >close info overlay</CloseButton
-  >
+  <CloseButton functionOnClick={closeInfoOverlay} />
 
   <div class="header__menu__margin">
     <div class="info__tabs first__row">
@@ -46,9 +44,7 @@
       </button>
     </div>
   </div>
-  <CloseButton functionOnClick={closeInfoOverlay}
-    >close info overlay</CloseButton
-  >
+  <CloseButton functionOnClick={closeInfoOverlay} />
   <div class="overlay__outer">
     <div class="overlay__content">
       <section style={active_tab !== 1 ? 'display: none;' : ''}>
