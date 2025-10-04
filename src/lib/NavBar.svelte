@@ -1,13 +1,72 @@
-<script>
+<script lang="ts">
   import logo from '$lib/assets/PRS_LOGO2024.png';
+  import { onDestroy, onMount } from 'svelte';
+  import { fade } from 'svelte/transition';
   import InfoButton from './InfoButton.svelte';
   import AddButton from './AddButton.svelte';
-  import { infoOverlayVisible, addOverlayVisible } from '../stores';
+  import AddTooltip from './AddTooltip.svelte';
+  import {
+    infoOverlayVisible,
+    addOverlayVisible,
+    activeMarkerCoords
+  } from '../stores';
+
+  let showTooltip = false;
+  let lastMarkerKey: string | null = null;
+  let tooltipTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function clearTooltipTimer() {
+    if (tooltipTimer) {
+      clearTimeout(tooltipTimer);
+      tooltipTimer = null;
+    }
+  }
+
+  function revealTooltip() {
+    clearTooltipTimer();
+    showTooltip = true;
+  }
+
+  function hideTooltip() {
+    clearTooltipTimer();
+    showTooltip = false;
+  }
+
+  function handleTooltipKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      hideTooltip();
+    }
+  }
+
+  onMount(() => {
+    tooltipTimer = setTimeout(() => {
+      revealTooltip();
+      tooltipTimer = null;
+    }, 60000);
+  });
+
+  onDestroy(() => {
+    clearTooltipTimer();
+  });
+
+  $: {
+    if ($activeMarkerCoords) {
+      const markerKey = `${$activeMarkerCoords.lng},${$activeMarkerCoords.lat}`;
+      if (markerKey !== lastMarkerKey && !showTooltip) {
+        revealTooltip();
+      }
+      lastMarkerKey = markerKey;
+    } else {
+      lastMarkerKey = null;
+    }
+  }
 
   function openInfoOverlay() {
     infoOverlayVisible.update(() => true);
   }
   function openAddOverlay() {
+    hideTooltip();
     addOverlayVisible.update(() => true);
   }
 </script>
@@ -34,6 +93,19 @@
     id="add"
     aria-label="open add overlay"
   >
+    {#if showTooltip}
+      <div
+        class="add-tooltip-wrapper"
+        transition:fade
+        on:click|stopPropagation={hideTooltip}
+        on:keydown|stopPropagation={handleTooltipKeydown}
+        role="button"
+        tabindex="0"
+        aria-label="Hide add tooltip"
+      >
+        <AddTooltip />
+      </div>
+    {/if}
     <AddButton />
   </button>
 </nav>
@@ -79,6 +151,10 @@
     position: fixed;
     z-index: var(--overlay-trigger-z-index);
     color: var(--color-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
   }
 
   @media (min-width: 800px) {
@@ -96,5 +172,9 @@
   .overlay-trigger.overlay-trigger--add {
     right: 9px;
     top: 9px;
+  }
+
+  .add-tooltip-wrapper {
+    position: relative;
   }
 </style>

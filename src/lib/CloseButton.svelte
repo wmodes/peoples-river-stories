@@ -37,6 +37,7 @@
       ></line></svg
     >
   </span>
+  <slot />
 </button>
 
 <style>
