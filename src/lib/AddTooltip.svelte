@@ -1,7 +1,5 @@
 <div class="tooltip">
-  <div class="tooltip__content">
-    Click to add your story
-  </div>
+  <div class="tooltip__content">Click to add your story</div>
   <div class="tooltip__tail"></div>
 </div>
 
