@@ -14,7 +14,29 @@
   declare global {
     interface Window {
       refreshMapData?: () => Promise<boolean>;
+      testReloadMarker?: () => string;
     }
+  }
+
+  const IDLE_INTERVAL_MS = 2 * 60 * 1000; // temporary 2-minute interval for testing
+  let idleTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function clearReloadTimer() {
+    if (idleTimer) {
+      clearTimeout(idleTimer);
+      idleTimer = null;
+    }
+  }
+
+  function scheduleReload() {
+    clearReloadTimer();
+    idleTimer = setTimeout(() => {
+      refreshMapData().then((success) => {
+        if (!success) {
+          scheduleReload();
+        }
+      });
+    }, IDLE_INTERVAL_MS);
   }
 
   async function refreshMapData(): Promise<boolean> {
@@ -47,9 +69,34 @@
     }
   }
 
+  const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart'];
+
+  function attachActivityListeners() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    ACTIVITY_EVENTS.forEach((eventName) => {
+      window.addEventListener(eventName, scheduleReload, { passive: true });
+    });
+  }
+
+  function detachActivityListeners() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    ACTIVITY_EVENTS.forEach((eventName) => {
+      window.removeEventListener(eventName, scheduleReload);
+    });
+  }
+
   onMount(() => {
     if (typeof window !== 'undefined') {
       window.refreshMapData = refreshMapData;
+      window.testReloadMarker = () => 'test successful 01';
+      attachActivityListeners();
+      scheduleReload();
     }
   });
 
@@ -60,6 +107,14 @@
     ) {
       delete window.refreshMapData;
     }
+    if (
+      typeof window !== 'undefined' &&
+      window.testReloadMarker
+    ) {
+      delete window.testReloadMarker;
+    }
+    detachActivityListeners();
+    clearReloadTimer();
   });
 </script>
 
