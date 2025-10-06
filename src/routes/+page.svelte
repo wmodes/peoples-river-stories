@@ -11,14 +11,7 @@
   import DonatePopup from '$lib/DonatePopup.svelte';
   import { onDestroy, onMount } from 'svelte';
 
-  declare global {
-    interface Window {
-      refreshMapData?: () => Promise<boolean>;
-      testReloadMarker?: () => string;
-    }
-  }
-
-  const IDLE_INTERVAL_MS = 2 * 60 * 1000; // temporary 2-minute interval for testing
+  const IDLE_INTERVAL_MS = 60 * 60 * 1000; // 60 minutes
   let idleTimer: ReturnType<typeof setTimeout> | null = null;
 
   function clearReloadTimer() {
@@ -51,7 +44,6 @@
         resources.map(async (url) => {
           const versionedUrl = `${url}?v=${timestamp}`;
           const response = await fetch(versionedUrl, { cache: 'no-store' });
-          console.info('refreshMapData fetched', url, response.status);
           if (!response.ok) {
             throw new Error(`Fetch failed for ${url} (${response.status})`);
           }
@@ -92,24 +84,11 @@
   }
 
   onMount(() => {
-    if (typeof window !== 'undefined') {
-      window.refreshMapData = refreshMapData;
-      window.testReloadMarker = () => 'test successful 01';
-      attachActivityListeners();
-      scheduleReload();
-    }
+    attachActivityListeners();
+    scheduleReload();
   });
 
   onDestroy(() => {
-    if (
-      typeof window !== 'undefined' &&
-      window.refreshMapData === refreshMapData
-    ) {
-      delete window.refreshMapData;
-    }
-    if (typeof window !== 'undefined' && window.testReloadMarker) {
-      delete window.testReloadMarker;
-    }
     detachActivityListeners();
     clearReloadTimer();
   });
