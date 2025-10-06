@@ -9,6 +9,43 @@
   import { addOverlayVisible, infoOverlayVisible } from '../stores';
   import prs_sharing_image from '$lib/assets/prs_sharing_image.jpg';
   import DonatePopup from '$lib/DonatePopup.svelte';
+  import { onDestroy, onMount } from 'svelte';
+
+  declare global {
+    interface Window {
+      refreshMapData?: () => Promise<boolean>;
+    }
+  }
+
+  async function refreshMapData(): Promise<boolean> {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+
+    try {
+      const resources = ['/data/moments.json', '/data/descriptions.json'];
+      await Promise.all(
+        resources.map((url) => fetch(url, { cache: 'reload' }))
+      );
+      window.location.reload();
+      return true;
+    } catch (error) {
+      console.error('Failed to refresh map data', error);
+      return false;
+    }
+  }
+
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      window.refreshMapData = refreshMapData;
+    }
+  });
+
+  onDestroy(() => {
+    if (typeof window !== 'undefined' && window.refreshMapData === refreshMapData) {
+      delete window.refreshMapData;
+    }
+  });
 </script>
 
 <svelte:head>
