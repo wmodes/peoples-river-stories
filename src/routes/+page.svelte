@@ -23,10 +23,22 @@
     }
 
     try {
+      const timestamp = Date.now();
       const resources = ['/data/moments.json', '/data/descriptions.json'];
-      await Promise.all(
-        resources.map((url) => fetch(url, { cache: 'reload' }))
+      const responses = await Promise.all(
+        resources.map(async (url) => {
+          const versionedUrl = `${url}?v=${timestamp}`;
+          const response = await fetch(versionedUrl, { cache: 'no-store' });
+          console.info('refreshMapData fetched', url, response.status);
+          if (!response.ok) {
+            throw new Error(`Fetch failed for ${url} (${response.status})`);
+          }
+          return response;
+        })
       );
+
+      responses.forEach((response) => response.body?.cancel());
+
       window.location.reload();
       return true;
     } catch (error) {
@@ -42,7 +54,10 @@
   });
 
   onDestroy(() => {
-    if (typeof window !== 'undefined' && window.refreshMapData === refreshMapData) {
+    if (
+      typeof window !== 'undefined' &&
+      window.refreshMapData === refreshMapData
+    ) {
       delete window.refreshMapData;
     }
   });
