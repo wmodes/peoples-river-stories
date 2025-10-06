@@ -107,10 +107,7 @@
     ) {
       delete window.refreshMapData;
     }
-    if (
-      typeof window !== 'undefined' &&
-      window.testReloadMarker
-    ) {
+    if (typeof window !== 'undefined' && window.testReloadMarker) {
       delete window.testReloadMarker;
     }
     detachActivityListeners();
